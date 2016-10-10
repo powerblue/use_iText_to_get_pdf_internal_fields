@@ -12,6 +12,17 @@ Readme.md                  - this file;
 start.cmd                  - template bath script for MS Windows OS, uses in "build-InStandaloneEnv.xml"
 start.sh                   - template bath script for *Nix OS [bash], uses in "build-InStandaloneEnv.xml"
 
+## Build using Intellij:
+--------------
+If using IntelliJ (set to Java Level 8):
+
+Download the .zip from GitHub
+IntelliJ > open project > PDFFormParser
+IntelliJ > Build > Make
+
+Now get inside the build dir and run the following, this will read the internal fields in form.pdf and output them to form.txt
+
+./start.sh -LIST_FIELDS form.pdf 2>form.txt
 
 ## Build:
 --------------
