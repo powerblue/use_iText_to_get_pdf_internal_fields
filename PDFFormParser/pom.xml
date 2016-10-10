@@ -6,10 +6,11 @@
 
     <groupId>fr.jp.pdf.formparser</groupId>
     <artifactId>PDFFormParser</artifactId>
-    <version>16.10.8.1</version>
+    <version>16.10.11.1</version>
     <description>
         PDF Form Parser
 
+        2016.10.11: ~ up java level to 8
         2016.10.08: + PDFFormParser.java
                     + JUnit test "test_PDDocumentFormFill()" - fill the PDF data form
         2016.10.07: + init version for UpWork
@@ -21,14 +22,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                     <encoding>utf8</encoding>
                     <fork>true</fork>
                     <!--
                     <executable>${env.JAVA_DEV}\bin\javac</executable>
                     -->
-                    <compilerVersion>1.7</compilerVersion>
+                    <compilerVersion>1.8</compilerVersion>
                     <verbose>true</verbose>
                 </configuration>
             </plugin>
