@@ -19,7 +19,7 @@ If using IntelliJ (set to Java Level 8):
 1. Download the .zip from GitHub.
 2. IntelliJ > open project > select PDFFormParser folder.
 3. IntelliJ > Build > Make.
-4. Now get inside the build dir and run the following, this will read the internal fields in form.pdf and output them to form.txt
+4. Now, using command line, get into the build dir and run the following, this will read the internal fields in form.pdf and output them to form.txt:
 
 ./start.sh -LIST_FIELDS form.pdf 2>form.txt
 
