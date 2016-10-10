@@ -23,3 +23,11 @@ For build all modules:
 
 For build all modules & assembly the stanalone RC-consoleapp in folder "build/":
 >ant -f build-InStandaloneEnv.xml assemble-build
+
+
+## Run:
+> cd build
+### Windows
+> start.cmd -LIST_FIELDS form_b101.pdf 2>form_b101.txt 
+### *NIX
+> start.sh -LIST_FIELDS form_b101.pdf 2>form_b101.txt 
