@@ -28,6 +28,6 @@ For build all modules & assembly the stanalone RC-consoleapp in folder "build/":
 ## Run:
 > cd build
 ### Windows
-> start.cmd -LIST_FIELDS form_b101.pdf 2>form_b101.txt 
+> start.cmd -LIST_FIELDS form_1.pdf 2>form_1.txt 
 ### *NIX
-> start.sh -LIST_FIELDS form_b101.pdf 2>form_b101.txt 
+> start.sh -LIST_FIELDS form_1.pdf 2>form_1.txt 
