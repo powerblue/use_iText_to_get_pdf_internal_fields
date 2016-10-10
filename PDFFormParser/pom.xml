@@ -6,11 +6,12 @@
 
     <groupId>fr.jp.pdf.formparser</groupId>
     <artifactId>PDFFormParser</artifactId>
-    <version>16.10.11.1</version>
+    <version>16.10.11.2</version>
     <description>
         PDF Form Parser
 
         2016.10.11: ~ up java level to 8
+                    ~ BugFIX: Utf BOM char into FormParser.java
         2016.10.08: + PDFFormParser.java
                     + JUnit test "test_PDDocumentFormFill()" - fill the PDF data form
         2016.10.07: + init version for UpWork

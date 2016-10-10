@@ -1,4 +1,4 @@
-﻿package fr.jp.pdf;
+package fr.jp.pdf;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * Date: 2016.10.06
  */
 public class FormParser {
-  public static final String VERSION = "16.10.11.1";
+  public static final String VERSION = "16.10.11.2";
   private static final Logger LOGGER = LoggerFactory.getLogger(FormParser.class);
   public static final String PARAM_KEY__GET_LIST = "-LIST_FIELDS";
   private static final String MSG_HELP = "usage:\n> java -cp $CLASSPATH fr.jp.pdf.FormParser -LIST_FIELDS pdf_file\n";
