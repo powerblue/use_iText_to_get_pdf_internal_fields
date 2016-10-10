@@ -12,7 +12,7 @@ Readme.md                  - this file;
 start.cmd                  - template bath script for MS Windows OS, uses in "build-InStandaloneEnv.xml"
 start.sh                   - template bath script for *Nix OS [bash], uses in "build-InStandaloneEnv.xml"
 
-## Build using IntelliJ:
+## Building and using from IntelliJ:
 --------------
 If using IntelliJ (set to Java Level 8):
 
