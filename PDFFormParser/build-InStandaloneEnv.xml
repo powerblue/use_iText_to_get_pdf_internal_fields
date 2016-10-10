@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- =========================================================
+dctm.programmer@gmail.com
+     ========================================================= -->
+<project name="rc" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	<!--
+	Lib for build-файла for execute maven tasks
+	-->
+	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+			uri="antlib:org.apache.maven.artifact.ant"
+			classpathref="maven-ant-tasks.classpath" />
+
+	<!--
+	var for bridge ANT and Maven
+	-->
+	<artifact:pom id="maven.project" file="pom.xml"/>
+
+	<!--
+	Create classpath from Project's dependences
+	-->
+	<artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" pomRefId="maven.project" useScope="runtime"/>
+
+	<!--
+	Collect the required libs
+	-->
+	<!--property name="test.run.dir" value="${maven.project.build.directory}/test-run"/-->
+        <property name="project.basedir" value="${maven.project.basedir}"/>
+	<property name="build.dir" value="${maven.project.build.directory}/build"/>
+	<target name="assemble-build">
+		<!-- Run "mvn clean package -DskipTests" -->
+		<artifact:mvn pom="pom.xml">
+			<arg value="clean"/>
+			<arg value="package"/>
+			<arg value="-DskipTests"/>
+		</artifact:mvn>
+		<!-- Copy dependencies lib and command script files -->
+		<copy todir="${build.dir}" flatten="true">
+			<fileset refid="dependency.fileset"/>
+			<fileset dir="target">
+			  <include name="*.jar"/>
+			  <exclude name="*test*.jar"/>
+			</fileset>
+			<fileset file="start.cmd"/>
+			<fileset file="start.sh"/>
+		</copy>
+
+		<!-- Set CLASSPATH in Windows CMD file -->
+		<fileset dir="${build.dir}" id="test.run.jars">
+			<include name="*.jar"/>
+		</fileset>
+		<pathconvert pathsep=";" property="semi.separated.test.run.jars" refid="test.run.jars">
+			<map from="${build.dir}/" to=""/>
+		</pathconvert>
+		<replace file="${build.dir}/start.cmd" token="@classpath@" value="${semi.separated.test.run.jars}"/>
+		<!-- Set CLASSPATH in Unix command file -->
+		<fileset dir="${build.dir}" id="test.run.jars1">
+			<include name="*.jar"/>
+		</fileset>
+		<pathconvert pathsep=":$AA/" property="spec.separated.test.run.jars" refid="test.run.jars1">
+			<map from="${build.dir}/" to=""/>
+		</pathconvert>
+		<replace file="${build.dir}/start.sh" token="@classpath@" value="${spec.separated.test.run.jars}"/>
+		<!-- Copy build from target Folder -->
+		<delete>
+		  <fileset dir="build">
+  		    <exclude name="*.properties"/>
+  		    <exclude name="*.csv"/>
+		    <exclude name="*.txt"/>
+ 		  </fileset>
+		</delete>
+		<copy todir="build">
+			<fileset dir="${build.dir}"/>
+		</copy>
+		<!-- Clean -->
+		<artifact:mvn pom="pom.xml">
+			<arg value="clean"/>
+		</artifact:mvn>
+
+	</target>
+	
+
+</project>

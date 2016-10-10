@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fr.jp.pdf.formparser</groupId>
+    <artifactId>PDFFormParser</artifactId>
+    <version>16.10.8.1</version>
+    <description>
+        PDF Form Parser
+
+        2016.10.08: + PDFFormParser.java
+                    + JUnit test "test_PDDocumentFormFill()" - fill the PDF data form
+        2016.10.07: + init version for UpWork
+    </description>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>utf8</encoding>
+                    <fork>true</fork>
+                    <!--
+                    <executable>${env.JAVA_DEV}\bin\javac</executable>
+                    -->
+                    <compilerVersion>1.7</compilerVersion>
+                    <verbose>true</verbose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <encoding>utf8</encoding>
+                </configuration>
+            </plugin>
+            <!--
+            Default - try get 2.7.2 version, then crash.
+            Need set manual 3.7.1 v!
+            -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.1</version>
+            </plugin>
+            <!-- For access ANT building into MAVEN POM -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <developers>
+        <developer>
+            <id>fr.jp</id>
+            <name>fr.jp</name>
+            <email>java.progaman@gmail.com</email>
+            <roles>
+                <role>architector</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+6</timezone>
+        </developer>
+    </developers>
+    <dependencies>
+
+        <dependency>
+          <groupId>org.apache.pdfbox</groupId>
+          <artifactId>pdfbox</artifactId>
+          <version>2.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+
+        <!-- Libs for testing tasks -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
