@@ -3,7 +3,10 @@ package fr.jp.pdf;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Hashtable;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -18,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * Date: 2016.10.06
  */
 public class FormParser {
-  public static final String VERSION = "16.10.11.2";
+  public static final String VERSION = "16.10.11.3";
   private static final Logger LOGGER = LoggerFactory.getLogger(FormParser.class);
   public static final String PARAM_KEY__GET_LIST = "-LIST_FIELDS";
   private static final String MSG_HELP = "usage:\n> java -cp $CLASSPATH fr.jp.pdf.FormParser -LIST_FIELDS pdf_file\n";
@@ -97,6 +100,30 @@ public class FormParser {
     }
 
     LOGGER.debug("Finish processing PDF doc [{}]", file_name);
+  }
+
+  /**
+   * parse key=value array as single String
+   *
+   * @param key_values_string - key=value array as single String
+   * @return -
+   */
+  public static Hashtable<String, String> prepareData(String key_values_string) throws ParseException {
+    LOGGER.debug("Invoke with [{}]", key_values_string);
+    Hashtable<String, String> result = new Hashtable<>();
+    String[] key_values_arr = key_values_string.split(";");
+    LOGGER.trace("Found the {} pair key=value", key_values_arr.length);
+    for(String key_value: key_values_arr) {
+      String[] key_value_pair_arr = key_value.split("=");
+      if (key_value_pair_arr.length != 2) {
+        throw new ParseException("Wrong format \"key=value\" pair: " + key_value, 0);
+      }
+      if (result.containsKey( key_value_pair_arr[0])) {
+        throw new ParseException("Found duplicate Key: " + key_value_pair_arr[0], 0);
+      }
+      result.put(key_value_pair_arr[0], key_value_pair_arr[1]);
+    }
+    return result;
   }
 
   private static void printHelp() {

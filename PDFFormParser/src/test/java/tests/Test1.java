@@ -1,5 +1,6 @@
 package tests;
 
+import fr.jp.pdf.FormParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
+import java.util.Hashtable;
 import java.util.Properties;
 
 /**
@@ -30,6 +33,7 @@ public class Test1 {
   private static final Logger LOGGER = LoggerFactory.getLogger(Test1.class);
   private static final String TEST_PROPERTIES_FILE = "Test.properties";
   private static final String CFG_KEY__TEST_PDF = "pdf.processing.file";
+  private static final String CFG_KEY__TEST_FILL_VALUES = "fill.values";
 
   private Properties props;
 
@@ -157,7 +161,6 @@ public class Test1 {
   public void test_PDDocumentFormFill() {
     LOGGER.debug("Start");
     String file_name = props.getProperty(CFG_KEY__TEST_PDF);
-
     LOGGER.debug("Start for [{}]", file_name);
     LOGGER.debug("Try open PDF file: [{}]", file_name);
 
@@ -167,6 +170,8 @@ public class Test1 {
 
     PDDocument doc = null;
     try {
+      Hashtable<String, String> fill_values = FormParser.prepareData( props.getProperty(CFG_KEY__TEST_FILL_VALUES));
+
       doc = PDDocument.load(file);
       assertNotNull("Problem with load PDDocument!", doc);
       LOGGER.debug("PDDocument open succ");
@@ -178,15 +183,17 @@ public class Test1 {
       assertNotNull("The PDF Doc \"" + file_name + "\" hasn't a FORM FIELDS!", acroForm);
       int i = 0;
       for (PDField field : acroForm.getFields()) {
-        if (i == 0) {
-          field.setValue("TEST VALUE");
+        String field_name = field.getPartialName();
+        if (fill_values.containsKey( field_name)) {
+          field.setValue( fill_values.get( field_name));
+          LOGGER.info("set [{}={}]", field_name, fill_values.get( field_name));
         }
-        LOGGER.info("{}. Get PDField: [{}]", ++i, field);
+        LOGGER.debug("{}. Get PDField: [{}]", ++i, field);
       }
       String result_file_name = "_" + file_name;
       doc.save(result_file_name);
       LOGGER.info("PDF doc save: [{}]", result_file_name);
-    } catch (IOException e) {
+    } catch (IOException|ParseException e) {
       LOGGER.error("Problem: ", e);
     } finally {
       if (doc != null)
@@ -200,6 +207,7 @@ public class Test1 {
 
     LOGGER.debug("Finish processing PDF doc [{}]", file_name);
   }
+
 
 
 }

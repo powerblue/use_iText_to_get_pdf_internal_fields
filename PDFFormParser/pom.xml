@@ -6,15 +6,19 @@
 
     <groupId>fr.jp.pdf.formparser</groupId>
     <artifactId>PDFFormParser</artifactId>
-    <version>16.10.11.2</version>
+    <version>16.10.11.3</version>
     <description>
         PDF Form Parser
 
-        2016.10.11: ~ up java level to 8
-                    ~ BugFIX: Utf BOM char into FormParser.java
-        2016.10.08: + PDFFormParser.java
+        16.10.11.3 Progaman:
+                  + Test1.test_PDDocumentFormFill: fill the PDF doc test data from Test.properties
+                  ~ FormParser:
+                    + prepareData(): parse key=value array as single String
+        16.10.11: ~ up java level to 8
+                  ~ BugFIX: Utf BOM char into FormParser.java
+        16.10.8:  + PDFFormParser.java
                     + JUnit test "test_PDDocumentFormFill()" - fill the PDF data form
-        2016.10.07: + init version for UpWork
+        16.10.7:  + init version for UpWork
     </description>
     <build>
         <plugins>
