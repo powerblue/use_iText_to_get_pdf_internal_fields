@@ -26,7 +26,7 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public class Test1 {
-  public String VERSION = "16.10.06.1";
+  public String VERSION = "16.10.11.1";
   private static final Logger LOGGER = LoggerFactory.getLogger(Test1.class);
   private static final String TEST_PROPERTIES_FILE = "Test.properties";
   private static final String CFG_KEY__TEST_PDF = "pdf.processing.file";
@@ -84,8 +84,59 @@ public class Test1 {
       LOGGER.debug("PDAcroForm getted: [{}]", acroForm);
       assertNotNull("The PDF Doc \"" + file_name + "\" hasn't a FORM FIELDS!", acroForm);
       int i = 0;
-      for (PDField field : acroForm.getFields())
-        LOGGER.info("{}. Get PDField: [{}]", Integer.valueOf(++i), field);
+      for (PDField field : acroForm.getFields()) {
+        LOGGER.info("{}. Get PDField: [{}]", ++i, field);
+      }
+    } catch (IOException e) {
+      LOGGER.error("Problem: ", e);
+    } finally {
+      if (doc != null)
+        try {
+          doc.close();
+          LOGGER.trace("PDDocument closed");
+        } catch (IOException e) {
+          LOGGER.error("Can't close PDDocument:", e);
+        }
+    }
+
+    LOGGER.debug("Finish processing PDF doc [{}]", file_name);
+  }
+
+
+  @Test
+  public void test_PDDocumentFormListFieldsDetails() {
+    LOGGER.debug("Start");
+    String file_name = props.getProperty(CFG_KEY__TEST_PDF);
+
+    LOGGER.debug("Start for [{}]", file_name);
+    LOGGER.debug("Try open PDF file: [{}]", file_name);
+
+    URL fileURL = super.getClass().getClassLoader().getResource(file_name);
+    assertNotNull("NOT FOUND File \"" + file_name + "\"", fileURL);
+    File file = new File(fileURL.getFile());
+
+    PDDocument doc = null;
+    try {
+      doc = PDDocument.load(file);
+      assertNotNull("Problem with load PDDocument!", doc);
+      LOGGER.debug("PDDocument open succ");
+
+      PDDocumentCatalog documentCatalog = doc.getDocumentCatalog();
+      LOGGER.debug("PDDocumentCatalog getted: [{}]", documentCatalog);
+      PDAcroForm acroForm = documentCatalog.getAcroForm();
+      LOGGER.debug("PDAcroForm getted: [{}]", acroForm);
+      assertNotNull("The PDF Doc \"" + file_name + "\" hasn't a FORM FIELDS!", acroForm);
+      int i = 0;
+      for (PDField field : acroForm.getFields()) {
+        LOGGER.info("{}. Get PDField: [{}]", ++i, field);
+        LOGGER.info("    getActions:            [{}]", field.getActions());
+        LOGGER.info("    getAlternateFieldName: [{}]", field.getAlternateFieldName());
+        LOGGER.info("    getCOSObject:          [{}]", field.getCOSObject());
+        LOGGER.info("    getFieldType:          [{}]", field.getFieldType());
+        LOGGER.info("    getFullyQualifiedName: [{}]", field.getFullyQualifiedName());
+        LOGGER.info("    getMappingName:        [{}]", field.getMappingName());
+        LOGGER.info("    getPartialName:        [{}]", field.getPartialName());
+      }
     } catch (IOException e) {
       LOGGER.error("Problem: ", e);
     } finally {
@@ -130,7 +181,7 @@ public class Test1 {
         if (i == 0) {
           field.setValue("TEST VALUE");
         }
-        LOGGER.info("{}. Get PDField: [{}]", Integer.valueOf(++i), field);
+        LOGGER.info("{}. Get PDField: [{}]", ++i, field);
       }
       String result_file_name = "_" + file_name;
       doc.save(result_file_name);
