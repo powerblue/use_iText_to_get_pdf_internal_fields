@@ -1,0 +1,11 @@
+*~
+classes
+*.class
+deploy
+temp
+.idea
+*.iml
+*.log
+*.7z
+*.zip
+.data
