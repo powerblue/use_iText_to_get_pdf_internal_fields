@@ -28,9 +28,9 @@ import java.util.Properties;
  * Time: 11:12 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Test1 {
+public class TestPDFBox {
   public String VERSION = "16.10.11.1";
-  private static final Logger LOGGER = LoggerFactory.getLogger(Test1.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TestPDFBox.class);
   private static final String TEST_PROPERTIES_FILE = "Test.properties";
   private static final String CFG_KEY__TEST_PDF = "pdf.processing.file";
   private static final String CFG_KEY__TEST_FILL_VALUES = "fill.values";
@@ -38,7 +38,7 @@ public class Test1 {
   private Properties props;
 
 
-  public Test1() {
+  public TestPDFBox() {
     props = new Properties();
     try {
       props.load(getClass().getClassLoader().getResourceAsStream(TEST_PROPERTIES_FILE));
