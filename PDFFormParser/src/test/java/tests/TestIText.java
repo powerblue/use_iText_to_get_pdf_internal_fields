@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.impl.Log4jLoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +30,10 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TestIText {
     public String VERSION = "16.10.13.1";
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestIText.class);
+    // To avoid conflicting multiple loggers, it is necessary to specify directly
+    //private static final Logger LOGGER = LoggerFactory.getLogger(TestIText.class);
+    private static final Logger LOGGER = new Log4jLoggerFactory().getLogger(TestIText.class.getName());
+
     private static final String TEST_PROPERTIES_FILE = "Test.properties";
     private static final String CFG_KEY__TEST_PDF = "pdf.processing.file";
     private static final String CFG_KEY__TEST_FILL_VALUES = "fill.values";
@@ -196,6 +200,10 @@ public class TestIText {
                 AcroFields.Item field = fields.get(field_key);
                 LOGGER.info("{}. [Page:{}, tabOrder:{}, Field.size:{}, Key:{}] ", ++i, field.getPage(0), field.getTabOrder(0), field.size(), field_key );
                 //
+                if (field_key.equals("Check Box15")) {
+                    LOGGER.trace("Check Box15 found");
+                }
+
                 for (int j = 0; j < field.size(); j++) {
                     PdfDictionary value = field.getValue(j);
                     for (PdfName key : value.getKeys()) {

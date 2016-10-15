@@ -10,6 +10,8 @@
     <description>
         PDF Form Parser
 
+        16.10.15.1 Progaman:
+                + BugFIX: multiple logger instance conflict, was only INFO level output
         16.10.13.1 Progaman:
                 ~ FormParser migrate from PDFBox to iText5
                 ~ JUnit: Test1 rename to TestPDFBox
@@ -111,7 +113,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.5</version>
-            <scope>compile</scope>
         </dependency>
 
         <!-- Libs for testing tasks -->
