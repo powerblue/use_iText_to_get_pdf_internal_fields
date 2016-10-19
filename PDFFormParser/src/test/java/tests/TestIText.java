@@ -15,10 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -199,15 +196,16 @@ public class TestIText {
             for (String field_key : fields.keySet()) {
                 AcroFields.Item field = fields.get(field_key);
                 LOGGER.info("{}. [Page:{}, tabOrder:{}, Field.size:{}, Key:{}] ", ++i, field.getPage(0), field.getTabOrder(0), field.size(), field_key );
+                List<String> appearanceStates = Arrays.asList( acroFields.getAppearanceStates(field_key));
+                LOGGER.info("   appearanceStates:{}", appearanceStates);
                 //
                 if (field_key.equals("Check Box15")) {
                     LOGGER.trace("Check Box15 found");
                 }
-
                 for (int j = 0; j < field.size(); j++) {
                     PdfDictionary value = field.getValue(j);
                     for (PdfName key : value.getKeys()) {
-                        LOGGER.debug("   {}:[{}]", key, value.get(key));
+                        LOGGER.info("   {}:[{}]", key, value.get(key));
                     }
                 }
             }
