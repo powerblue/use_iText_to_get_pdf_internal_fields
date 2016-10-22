@@ -1,8 +1,11 @@
 package tests;
 
+import com.cedarsoftware.util.io.JsonWriter;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.*;
+import fr.jp.data.adapters.GravityFormDataSource;
 import fr.jp.pdf.FormParser;
+import org.apache.commons.codec.digest.HmacUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,14 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.Log4jLoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.*;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,6 +39,11 @@ public class TestIText {
     private static final String TEST_PROPERTIES_FILE = "Test.properties";
     private static final String CFG_KEY__TEST_PDF = "pdf.processing.file";
     private static final String CFG_KEY__TEST_FILL_VALUES = "fill.values";
+
+    private static final String CFG_KEY__TEST_URL = "datasource.url";
+    private static final String CFG_KEY__TEST_GRAVITY_API_KEY = "gravity.api_key";
+    private static final String CFG_KEY__TEST_GRAVITY_ROUTE = "gravity.route";
+    private static final String CFG_KEY__TEST_GRAVITY_PRIVATE_KEY = "gravity.private_key";
 
     private Properties props;
 
@@ -219,7 +229,152 @@ public class TestIText {
         LOGGER.debug("Finish processing PDF doc [{}]", file_name);
     }
 
+    /**
+     * Simple URL.openStream()
+     */
+    @Test
+    public void test_URL_getPage_simple() {
+        LOGGER.debug("Start");
+        // Test opened URL
+        String test_url = props.getProperty(CFG_KEY__TEST_URL);
+        LOGGER.debug("Try read Page from URL: [{}]" + test_url);
+        URL testURL = null;
+        try {
+            testURL = new URL(test_url);
+            // read page without Gravity-authentication
+            BufferedReader br = new BufferedReader(new InputStreamReader(testURL.openStream()));
+            String page = "";
+            String strTemp = "";
+            while(null != (strTemp = br.readLine())){
+                page += strTemp + "\n";
+            }
+            assertTrue("!!!Not secure resource: [" + test_url + "]", page.contains("\"status\":401,\"response\":\"Permission denied\""));
+            LOGGER.info("Result of the attempt get the Page without Gravity-authentication:\n" + page);
+        } catch (MalformedURLException e) {
+            LOGGER.error("Incorrect the URL String: [{}]",test_url, e);
+        } catch (IOException e) {
+            LOGGER.error("Problem read from URL: \"" + test_url + "\"", e);
+        }
+        assertNotNull("Problem open URL", testURL);
+        LOGGER.debug("Finish");
+    }
 
+
+
+    /**
+     * https://www.gravityhelp.com/documentation/article/web-api/#authentication-for-external-applications
+     */
+    @Test
+    public void test_URL_getPage_withGravityAuthentication() {
+        LOGGER.debug("Start");
+        // Test opened URL
+        String test_url = props.getProperty(CFG_KEY__TEST_URL);
+        LOGGER.debug("Try read Page from URL: [{}]" + test_url);
+        URL testURL = null;
+        try {
+            // build the authentication string
+            // see https://www.gravityhelp.com/documentation/article/web-api/#authentication-for-external-applications
+            String string_to_sign = "{api_key}:{http method}:{route}:{expires}"; //Authentication for External applications
+            LOGGER.debug("Using format string for sign: [{}]", string_to_sign);
+            string_to_sign = string_to_sign.replace("{http method}", "GET");
+
+            String api_key = props.getProperty(CFG_KEY__TEST_GRAVITY_API_KEY);
+            LOGGER.trace("api_key: [{}]", api_key);
+            string_to_sign = string_to_sign.replace("{api_key}", api_key);
+
+            String route = props.getProperty(CFG_KEY__TEST_GRAVITY_ROUTE);
+            LOGGER.trace("route: [{}]", route);
+            string_to_sign = string_to_sign.replace("{route}", route);
+
+            long expires = new Date().getTime()/1000 + 10; //10 second
+            LOGGER.trace("expires: [{}]", expires);
+            string_to_sign = string_to_sign.replace("{expires}", ""+expires);
+            LOGGER.debug("Gravity's Authentication string, unsigned: [{}]", string_to_sign);
+
+            // sign the authentication string
+            String signature = new GravityFormDataSource().signHmacSHA1hash(string_to_sign);
+            LOGGER.debug("Signature created: [{}]", signature);
+
+            // add into URL request params
+            test_url +=("?api_key=" + api_key + "&signature=" + signature + "&expires=" + expires);
+            LOGGER.debug("Try request URL: [{}]", test_url);
+            // read page with Gravity-authentication
+            testURL = new URL(test_url);
+            BufferedReader br = new BufferedReader(new InputStreamReader(testURL.openStream()));
+            String page = "";
+            String strTemp = "";
+            while(null != (strTemp = br.readLine())){
+                page += strTemp + "\n";
+            }
+            LOGGER.debug("Result of the attempt get the Page with Gravity-authentication:\n" + page);
+            LOGGER.info("Result of the attempt get the Page with Gravity-authentication:\n" + JsonWriter.formatJson(page));
+            assertFalse("!!!Not secure resource: [" + test_url + "]", page.contains("\"status\":401,\"response\":\"Permission denied\""));
+
+        } catch (MalformedURLException e) {
+            LOGGER.error("Incorrect the URL String: [{}]",test_url, e);
+        } catch (IOException e) {
+            LOGGER.error("Problem read from URL: \"" + test_url + "\"", e);
+        }
+        assertNotNull("Problem open URL", testURL);
+        LOGGER.debug("Finish");
+    }
+
+
+
+    /**
+     * Test HMAC SHA-1 sign
+     */
+    @Test
+    public void test_signHmacSHA1_toBase64() {
+        LOGGER.debug("Start");
+        String string_to_sign = "1234:GET:forms/1/entries:1369749344";
+        String private_key = props.getProperty(CFG_KEY__TEST_GRAVITY_PRIVATE_KEY);
+        LOGGER.debug("try sign string: [{}], private_key: [{}]", string_to_sign, private_key);
+        byte[] hash = HmacUtils.hmacSha1(private_key, string_to_sign);
+        String signature = java.util.Base64.getEncoder().encodeToString(  hash );
+        try {
+            signature = URLEncoder.encode( signature, "ASCII");
+            LOGGER.info("Signed! signature: [{}], string_to_sign: [{}], private_key: [{}]", signature, string_to_sign, private_key);
+            assertTrue("Problem with URLEncode:", true);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.error("Encoding problem: ", e);
+            assertTrue("Problem with URLEncode:", false);
+        }
+        LOGGER.debug("Finish");
+    }
+
+
+    /**
+     * Test HMAC SHA-1 sign
+     */
+    @Test
+    public void test_sign() {
+        LOGGER.debug("Start");
+        String string_to_sign = "1234:GET:forms/1/entries:1369749344";
+        String private_key = props.getProperty(CFG_KEY__TEST_GRAVITY_PRIVATE_KEY);
+        String sign = new GravityFormDataSource().signHmacSHA1hash(string_to_sign, private_key);
+        LOGGER.info("Got Sign: [{}]", sign);
+        assertTrue("Sign not equial!", "uJEnk0EoQ4d3iinjFMBrBzZfH9w%3D".equals(sign));
+        LOGGER.debug("Finish");
+    }
+
+
+    /**
+     * Test HMAC SHA-1 sign
+     *
+     * GET
+     * http://mydomain.com/gravityformsapi/forms/25?api_key=1234&signature=PueNOtbfUe%2BMfClAOi2lfq%2BHLyo%3D&expires=1369749344
+     */
+    @Test
+    public void test_sign2() {
+        LOGGER.debug("Start");
+        String string_to_sign = "1234:GET:forms/25:1369749344";
+        String private_key = props.getProperty(CFG_KEY__TEST_GRAVITY_PRIVATE_KEY);
+        String sign = new GravityFormDataSource().signHmacSHA1hash(string_to_sign, private_key);
+        LOGGER.info("Got Sign: [{}]", sign);
+        assertTrue("Sign not equial!", "PueNOtbfUe%2BMfClAOi2lfq%2BHLyo%3D".equals(sign));
+        LOGGER.debug("Finish");
+    }
 
 
 }

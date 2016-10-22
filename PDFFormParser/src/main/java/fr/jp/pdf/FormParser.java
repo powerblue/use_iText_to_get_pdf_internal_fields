@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * Date: 2016.10.06
  */
 public class FormParser {
-  public static final String VERSION = "16.10.13.1";
+  public static final String VERSION = "16.10.22.1";
   private static final Logger LOGGER = LoggerFactory.getLogger(FormParser.class);
   public static final String PARAM_KEY__GET_LIST = "-LIST_FIELDS";
   private static final String MSG_HELP = "usage:\n> java -cp $CLASSPATH fr.jp.pdf.FormParser -LIST_FIELDS pdf_file\n";
@@ -29,7 +29,7 @@ public class FormParser {
     FormParser formParser = new FormParser();
 
     try {
-      String mode = formParser.getMode(args);
+      String mode = getMode(args);
       switch (mode) {
         case PARAM_KEY__GET_LIST:
           int idx_file_name = (args[0].equals(PARAM_KEY__GET_LIST)) ? 1 : 0;
@@ -44,7 +44,7 @@ public class FormParser {
     LOGGER.debug("Finish");
   }
 
-  private String getMode(String[] args) {
+  private static String getMode(String[] args) {
     LOGGER.debug("Start with {}", Arrays.asList(args));
     String mode = "UNKNOWN";
     if (args.length > 0) {

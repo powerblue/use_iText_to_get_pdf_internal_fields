@@ -10,6 +10,12 @@
     <description>
         PDF Form Parser
 
+        16.10.22.1 Progaman:
+                ~ TestIText: add Http and Crypto test methods:
+                  + test_URL_getPage_withGravityAuthentication(): HTTP Request with Gravity's Authenticate on http resource with JSON Response
+                + GravityFormDataSource.java: class for getting JSON data from http resource with Gravity's Authenticate request
+                + Apache commons-codec-1.10 libs with HmacSHA1 Encoder
+                + JSON Parser
         16.10.19.1 Progaman:
                 ~ TestIText.test_PDDocumentFormListDetails():
                   + added "appearanceStates" output of the possible field values (uses for CheckBoxes)
@@ -95,10 +101,25 @@
     </developers>
     <dependencies>
 
+        <!-- JSON Lib -->
         <dependency>
-          <groupId>org.apache.pdfbox</groupId>
-          <artifactId>pdfbox</artifactId>
-          <version>2.0.0</version>
+            <groupId>com.cedarsoftware</groupId>
+            <artifactId>json-io</artifactId>
+            <version>4.8.0</version>
+        </dependency>
+
+        <!-- HMAC-SHA1 Signature -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
+
+        <!-- PDF Form processing -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>2.0.0</version>
         </dependency>
 
         <dependency>
