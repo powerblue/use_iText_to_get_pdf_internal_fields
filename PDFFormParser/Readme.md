@@ -1,5 +1,9 @@
 # The PDF Form Parser.
-this maven's java project
+Have a many PDF files with Forms.
+Have a JSON DataSource:  http://www.bankruptcyfriend.com/gravityformsapi/forms/
+with HttpAuthentication: https://www.gravityhelp.com/documentation/article/web-api/#authentication-for-external-applications
+
+This maven's java project.
 
 ## Contents:
 --------------
